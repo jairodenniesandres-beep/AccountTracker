@@ -1,0 +1,89 @@
+@model AccountFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+<div class="mb-3">
+    <label asp-for="EmailAddress" class="form-label"></label>
+    <input asp-for="EmailAddress" class="form-control" autocomplete="off" placeholder="name@gmail.com" />
+    <span asp-validation-for="EmailAddress" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="DisplayName" class="form-label"></label>
+    <input asp-for="DisplayName" class="form-control" />
+    <span asp-validation-for="DisplayName" class="text-danger"></span>
+</div>
+<div class="mb-3">
+    <label asp-for="Password" class="form-label"></label>
+    <input asp-for="Password" class="form-control" autocomplete="new-password" />
+    @if (Model.IsEdit)
+    {
+        <div class="form-text">
+            @(Model.HasStoredPassword ? "Leave blank to keep the current password." : "No password is stored yet.")
+            Entering a new one also sets Last Password Change to today unless you change that date yourself.
+        </div>
+    }
+    else
+    {
+        <div class="form-text">Stored encrypted. It is never shown on lists.</div>
+    }
+    <span asp-validation-for="Password" class="text-danger"></span>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="RecoveryEmail" class="form-label"></label>
+        <input asp-for="RecoveryEmail" class="form-control" />
+        <span asp-validation-for="RecoveryEmail" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="RecoveryPhone" class="form-label"></label>
+        <input asp-for="RecoveryPhone" class="form-control" placeholder="+1 555 010 0001" />
+        <span asp-validation-for="RecoveryPhone" class="text-danger"></span>
+    </div>
+</div>
+<div class="mb-3 form-check">
+    <input asp-for="TwoFactorEnabled" class="form-check-input" />
+    <label asp-for="TwoFactorEnabled" class="form-check-label"></label>
+</div>
+<div class="mb-3">
+    <label asp-for="TwoFactorMethod" class="form-label"></label>
+    <select asp-for="TwoFactorMethod" asp-items="Html.GetEnumSelectList<TwoFactorMethod>()" class="form-select"></select>
+    <div class="form-text">Must be "None" when 2FA is disabled.</div>
+    <span asp-validation-for="TwoFactorMethod" class="text-danger"></span>
+</div>
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Purpose" class="form-label"></label>
+        <select asp-for="Purpose" asp-items="Html.GetEnumSelectList<AccountPurpose>()" class="form-select">
+            <option value="">-- Select purpose --</option>
+        </select>
+        <span asp-validation-for="Purpose" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status" asp-items="Html.GetEnumSelectList<AccountStatus>()" class="form-select"></select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <label asp-for="DateCreated" class="form-label"></label>
+        <input asp-for="DateCreated" max="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
+        <span asp-validation-for="DateCreated" class="text-danger"></span>
+    </div>
+    <div class="col-md-4 mb-3">
+        <label asp-for="LastPasswordChange" class="form-label"></label>
+        <input asp-for="LastPasswordChange" max="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" />
+        <span asp-validation-for="LastPasswordChange" class="text-danger"></span>
+    </div>
+    <div class="col-md-4 mb-3">
+        <label asp-for="LastLogin" class="form-label"></label>
+        <input asp-for="LastLogin" type="datetime-local" class="form-control" />
+        <span asp-validation-for="LastLogin" class="text-danger"></span>
+    </div>
+</div>
+<div class="mb-3">
+    <label asp-for="Notes" class="form-label"></label>
+    <textarea asp-for="Notes" rows="3" class="form-control"></textarea>
+    <div class="form-text">Optional, up to 1000 characters. Don't put passwords or 2FA backup codes here - notes are not encrypted.</div>
+    <span asp-validation-for="Notes" class="text-danger"></span>
+</div>

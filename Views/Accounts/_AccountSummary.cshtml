@@ -1,0 +1,54 @@
+@model GmailAccount
+@{
+    var today = DateTime.Today;
+}
+
+<dl class="row">
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.EmailAddress)</dt>
+    <dd class="col-sm-8">@Model.EmailAddress</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DisplayName)</dt>
+    <dd class="col-sm-8">@(Model.DisplayName ?? "-")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Purpose)</dt>
+    <dd class="col-sm-8">@Model.Purpose.GetDisplayName()</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Status)</dt>
+    <dd class="col-sm-8">@Model.Status.GetDisplayName()</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.TwoFactorEnabled)</dt>
+    <dd class="col-sm-8">@(Model.TwoFactorEnabled ? "Yes" : "No")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.TwoFactorMethod)</dt>
+    <dd class="col-sm-8">@Model.TwoFactorMethod.GetDisplayName()</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.RecoveryEmail)</dt>
+    <dd class="col-sm-8">@(Model.RecoveryEmail ?? "-")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.RecoveryPhone)</dt>
+    <dd class="col-sm-8">@(Model.RecoveryPhone ?? "-")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DateCreated)</dt>
+    <dd class="col-sm-8">@(Model.DateCreated?.ToString("d") ?? "-")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.LastPasswordChange)</dt>
+    <dd class="col-sm-8">
+        @(Model.LastPasswordChange?.ToString("d") ?? "Never recorded")
+        @if (Model.NeedsPasswordUpdate(today))
+        {
+            <span class="badge text-bg-warning">Needs password update</span>
+        }
+    </dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.LastLogin)</dt>
+    <dd class="col-sm-8">@(Model.LastLogin?.ToString("g") ?? "-")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.Notes)</dt>
+    <dd class="col-sm-8">
+        @if (string.IsNullOrEmpty(Model.Notes))
+        {
+            <text>-</text>
+        }
+        else
+        {
+            @foreach (var (line, i) in Model.Notes.Replace("\r\n", "\n").Split('\n').Select((l, i) => (l, i)))
+            {
+                if (i > 0) { <br /> }
+                @line
+            }
+        }
+    </dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.CreatedAt)</dt>
+    <dd class="col-sm-8">@Model.CreatedAt.ToLocalTime().ToString("g")</dd>
+    <dt class="col-sm-4">@Html.DisplayNameFor(m => m.UpdatedAt)</dt>
+    <dd class="col-sm-8">@Model.UpdatedAt.ToLocalTime().ToString("g")</dd>
+</dl>

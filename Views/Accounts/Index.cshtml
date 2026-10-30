@@ -1,0 +1,112 @@
+@model AccountIndexViewModel
+@{
+    ViewData["Title"] = "Accounts";
+    var f = Model.Filter;
+}
+
+<h1>Gmail Accounts</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Account</a>
+</p>
+
+<form asp-action="Index" method="get" class="card card-body bg-light mb-3">
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label for="Purpose" class="form-label">Purpose</label>
+            <select id="Purpose" name="Purpose" class="form-select">
+                <option value="">All</option>
+                @foreach (var p in Enum.GetValues<AccountPurpose>())
+                {
+                    <option value="@p" selected="@(f.Purpose == p)">@p.GetDisplayName()</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="Status" class="form-label">Status</label>
+            <select id="Status" name="Status" class="form-select">
+                <option value="">All</option>
+                @foreach (var s in Enum.GetValues<AccountStatus>())
+                {
+                    <option value="@s" selected="@(f.Status == s)">@s.GetDisplayName()</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="TwoFactor" class="form-label">2FA</label>
+            <select id="TwoFactor" name="TwoFactor" class="form-select">
+                <option value="">All</option>
+                <option value="yes" selected="@(f.TwoFactor == "yes")">Enabled</option>
+                <option value="no" selected="@(f.TwoFactor == "no")">Not enabled</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="Sort" class="form-label">Sort by</label>
+            <select id="Sort" name="Sort" class="form-select">
+                @foreach (var (value, text) in AccountSort.Options)
+                {
+                    <option value="@value" selected="@(f.Sort == value)">@text</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-8">
+            <label for="Search" class="form-label">Search</label>
+            <input id="Search" name="Search" type="search" maxlength="100" value="@f.Search" placeholder="Email, display name or notes" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Filter</button>
+            @if (Model.IsFiltered)
+            {
+                <a asp-action="Index" class="btn btn-link">Clear filters</a>
+            }
+        </div>
+    </div>
+</form>
+
+@if (Model.Accounts.Count == 0)
+{
+    <p class="text-muted">No accounts found.</p>
+}
+else
+{
+    <p class="text-muted">@Model.Accounts.Count account(s)</p>
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Email Address</th>
+                <th>Display Name</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>2FA</th>
+                <th>Last Password Change</th>
+                <th>Date Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in Model.Accounts)
+            {
+                <tr>
+                    <td>@a.EmailAddress</td>
+                    <td>@(a.DisplayName ?? "-")</td>
+                    <td>@a.Purpose.GetDisplayName()</td>
+                    <td>@a.Status.GetDisplayName()</td>
+                    <td>@(a.TwoFactorEnabled ? a.TwoFactorMethod.GetDisplayName() : "No")</td>
+                    <td class="text-nowrap">
+                        @(a.LastPasswordChange?.ToString("d") ?? "Never")
+                        @if (a.NeedsPasswordUpdate(Model.Today))
+                        {
+                            <span class="badge text-bg-warning">Update</span>
+                        }
+                    </td>
+                    <td class="text-nowrap">@(a.DateCreated?.ToString("d") ?? "-")</td>
+                    <td class="text-nowrap text-end">
+                        <a asp-action="Edit" asp-route-id="@a.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@a.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@a.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

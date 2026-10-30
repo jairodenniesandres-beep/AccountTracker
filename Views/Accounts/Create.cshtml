@@ -1,0 +1,22 @@
+@model AccountFormViewModel
+@{
+    ViewData["Title"] = "Add Account";
+}
+
+<h1>Add Account</h1>
+<hr />
+<div class="row">
+    <div class="col-lg-8">
+        <form asp-action="Create" method="post" autocomplete="off">
+            <partial name="_AccountForm" model="Model" />
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

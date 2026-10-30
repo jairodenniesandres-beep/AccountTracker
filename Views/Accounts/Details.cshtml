@@ -1,0 +1,48 @@
+@model AccountDetailsViewModel
+@{
+    ViewData["Title"] = "Account Details";
+    var a = Model.Account;
+}
+
+<h1>Account Details</h1>
+<h4>@a.EmailAddress</h4>
+<hr />
+
+<div class="row">
+    <div class="col-lg-8">
+        <partial name="_AccountSummary" model="a" />
+
+        <dl class="row">
+            <dt class="col-sm-4">Password</dt>
+            <dd class="col-sm-8">
+                @if (Model.RevealedPassword != null)
+                {
+                    <code>@Model.RevealedPassword</code>
+                    <div class="form-text">Shown once for this request. Reload the page or click "Hide" to mask it again.</div>
+                    <a asp-action="Details" asp-route-id="@a.Id" class="btn btn-sm btn-outline-secondary mt-1">Hide</a>
+                }
+                else if (Model.HasPassword)
+                {
+                    <span>********</span>
+                    <form asp-action="Reveal" asp-route-id="@a.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary ms-2">Reveal</button>
+                    </form>
+                }
+                else
+                {
+                    <span class="text-muted">No password stored</span>
+                }
+                @if (Model.RevealError != null)
+                {
+                    <div class="alert alert-warning mt-2 mb-0" role="alert">@Model.RevealError</div>
+                }
+            </dd>
+        </dl>
+
+        <div>
+            <a asp-action="Edit" asp-route-id="@a.Id" class="btn btn-primary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@a.Id" class="btn btn-outline-danger">Delete</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
